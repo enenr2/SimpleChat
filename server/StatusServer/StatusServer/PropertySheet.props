@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ImportGroup Label="PropertySheets" />
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <IncludePath>C:\cppsoft\mysql-connector\mysql-connector-c++-9.6.0-winx64\include;C:\cppsoft\libjson\include;C:\cppsoft\boost_1_90_0;C:\cppsoft\redis_s\deps\hiredis;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\cppsoft\mysql-connector\mysql-connector-c++-9.6.0-winx64\lib64\debug\vs14;C:\cppsoft\libjson\lib;C:\cppsoft\boost_1_90_0\lib;C:\cppsoft\redis_s\lib;$(LibraryPath)</LibraryPath>
+    <_PropertySheetDisplayName>shit</_PropertySheetDisplayName>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <Link>
+      <AdditionalDependencies>json_vc71_libmtd.lib;hiredis.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\cppsoft\redis_s\deps\hiredis;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\cppsoft\grpc\third_party\re2;C:\cppsoft\grpc\third_party\address_sorting\include;C:\cppsoft\grpc\third_party\abseil-cpp;C:\cppsoft\grpc\third_party\protobuf\src;C:\cppsoft\grpc\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup />
+</Project>
