@@ -44,6 +44,7 @@ void LonginDialog::on_pushButton_2_clicked()
     auto pwd=ui->lineEdit_2->text();
 
     QJsonObject json_obj;
+    json_obj["user"]=email;
     json_obj["email"]=email;
     json_obj["passwd"]=xorString(pwd);
     Httpmgl::GetInstance()->PostHttpReq(QUrl(gate_url_prefix+"/user_login"),

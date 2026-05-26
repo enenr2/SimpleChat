@@ -236,7 +236,7 @@ void ResetDialong::on_pushButton_clicked()
     QJsonObject json_obj;
     json_obj["user"] = ui->user_edit->text();
     json_obj["email"] = ui->email_edit->text();
-    json_obj["passwd"] = xorString(ui->pwd_edit->text());
+    json_obj["pwd"] = xorString(ui->pwd_edit->text());
     json_obj["varifycode"] = ui->varify_edit->text();
     Httpmgl::GetInstance()->PostHttpReq(QUrl(gate_url_prefix+"/reset_pwd"),
                                         json_obj, ReqId::ID_RESET_PWD,Modules::RESETMOD);

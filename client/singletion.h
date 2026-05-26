@@ -1,6 +1,8 @@
 #ifndef SINGLETION_H
 #define SINGLETION_H
 #include"gloal.h"
+#include <iostream>
+#include <mutex>
 template<typename T>
 class singletion{
 protected:

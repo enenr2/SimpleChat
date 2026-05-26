@@ -65,12 +65,21 @@ void ClichedLabel::leaveEvent(QEvent *event)
 
 void ClichedLabel::SetState(QString normal, QString hover, QString press, QString select, QString select_hover, QString select_press)
 {
+    _normal = normal;
+    _normal_hover = hover;
+    _normal_press = press;
 
+    _selected = select;
+    _selected_hover = select_hover;
+    _selected_press = select_press;
+
+    setProperty("state",normal);
+    repolish(this);
 }
 
 ClickLbState ClichedLabel::GetCurState()
 {
-
+    return _curstate;
 }
 
 void ClichedLabel::mousePressEvent(QMouseEvent *event)
@@ -110,4 +119,27 @@ void ClichedLabel::ChangeIron(ClickLbState now)
         QPixmap pix(":/images/res/visible.png");
         this->setPixmap(pix);
     }
+}
+
+void ClichedLabel::ResetNormalState()
+{
+    _curstate = ClickLbState::Normal;
+    setProperty("state", _normal);
+    repolish(this);
+    update();
+}
+
+bool ClichedLabel::SetCurState(ClickLbState state)
+{
+    _curstate = state;
+    if (_curstate == ClickLbState::Normal) {
+        setProperty("state", _normal);
+        repolish(this);
+    }
+    else if (_curstate == ClickLbState::Selected) {
+        setProperty("state", _selected);
+        repolish(this);
+    }
+
+    return true;
 }

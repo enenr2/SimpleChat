@@ -18,7 +18,6 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(longin,&LonginDialog::switchReset,this,&MainWindow::slotswitchReset);
     connect(TcpMgr::GetInstance().get(),&TcpMgr::sig_switc_chatlg,this,&MainWindow::slotswitchchat);
-    connect(chat,&ChatDialog::sig_CloseAll,this,&MainWindow::CloseAll);
 
     emit TcpMgr::GetInstance()->sig_switc_chatlg();
 
@@ -82,6 +81,7 @@ void MainWindow::slotswitchchat()
     setCentralWidget(chat);
     chat->setMinimumSize(QSize(1050,750));
     chat->setMaximumSize(QWIDGETSIZE_MAX,QWIDGETSIZE_MAX);
+    connect(chat,&ChatDialog::sig_CloseAll,this,&MainWindow::CloseAll);
 }
 
 void MainWindow::CloseAll()

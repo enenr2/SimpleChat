@@ -2,6 +2,9 @@
 #include "ui_chatpage.h"
 #include<QPainter>
 #include<QStyleOption>
+#include"gloal.h"
+#include"textbubble.h"
+#include"picturebubble.h"
 ChatPage::ChatPage(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::ChatPage)
@@ -34,7 +37,7 @@ ChatPage::ChatPage(QWidget *parent)
 )");
 
     // 4. 发送区域背景
-    ui->widget_5->setStyleSheet(R"(
+    ui->send_wid->setStyleSheet(R"(
     #widget_5 {
         background: #ffffff;
         border: none;
@@ -152,3 +155,39 @@ void ChatPage::paintEvent(QPaintEvent *event)
     QPainter p(this);
     style()->drawPrimitive(QStyle::PE_Widget,&opt,&p,this);
 }
+
+void ChatPage::on_send_btn_clicked()
+{
+    auto pTextEdit = ui->chatEdit;
+    ChatRole role = ChatRole::Self;
+    QString userName = QStringLiteral("测试气泡");
+    QString userIcon = ":/images/res/1c47ffaa3fa0851c66c281627e8de64b.jpg";
+
+    const QVector<MsgInfo>& msgList = pTextEdit->getMsgList();
+    for(int i=0; i<msgList.size(); ++i)
+    {
+        QString type = msgList[i].msgFlag;
+        ChatItemBase *pChatItem = new ChatItemBase(role);
+        pChatItem->setUserName(userName);
+        pChatItem->setUserIcon(QPixmap(userIcon));
+        QWidget *pBubble = nullptr;
+        if(type == "text")
+        {
+            pBubble = new TextBubble(role,msgList[i].content,this);
+        }
+        else if(type == "image")
+        {
+            pBubble = new PictureBubble(QPixmap(msgList[i].content) , role,this);
+        }
+        else if(type == "file")
+        {
+
+        }
+        if(pBubble != nullptr)
+        {
+            pChatItem->setWidget(pBubble);
+            ui->chat_data_list->appendChatItem(pChatItem);
+        }
+    }
+}
+

@@ -58,6 +58,7 @@
         <file>res/473e4cc830e8c5f795647248578fdade.jpg</file>
         <file>res/88843ce0e3e38325d108e44b10dbd243.jpg</file>
         <file>res/771931129d0cb386762bc3c33742dff9.jpg</file>
+        <file>res/a8e6197d37215df2cd7f1e135ab18e93.jpg</file>
     </qresource>
     <qresource prefix="/style">
         <file>qss/stylesheet.qss</file>

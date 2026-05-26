@@ -6,31 +6,9 @@
 #include"loadingdlg.h"
 #include"chatuserlist.h"
 #include<QIcon>
+#include<QPixmap>
+#include<QMouseEvent>
 
-std::vector<QString>  strs ={"hello world !",
-                             "nice to meet u",
-                             "New year，new life",
-                             "You have to love yourself",
-                             "My love is written in the wind ever since the whole world is you"};
-
-std::vector<QString> heads = {
-    ":/images/res/1b27103fc30ee170ccc0f601dd20ca79.jpg",
-    ":/images/res/771931129d0cb386762bc3c33742dff9.jpg",
-    ":/images/res/59bc6e781a87beb3f61bc174b85a4ac7.jpg",
-    ":/images/res/473e4cc830e8c5f795647248578fdade.jpg",
-    ":/images/res/88843ce0e3e38325d108e44b10dbd243.jpg"
-};
-
-std::vector<QString> names = {
-    "马自豪",
-    "蒋玉辉",
-    "薛佳乐",
-    "支帝翔",
-    "韩沅廷",
-    "王雪冰",
-    "王兆宇",
-    "袁一凡"
-};
 
 
 ChatDialog::ChatDialog(QWidget *parent)
@@ -43,6 +21,8 @@ ChatDialog::ChatDialog(QWidget *parent)
     ui->search_list->setStyleSheet("border:2px solid #f1f1f1");
     //ui->chat_user_wid->setStyleSheet("background-color:rgb(0,0,0)");
     ui->chat_user_list->setStyleSheet("background-color:rgb(247,237,248);border:none;");
+    ui->side_chat_lb->setStyleSheet("border-image: url(:/images/res/chat_icon_press.png) 0 0 0 0 stretch;");
+    ui->side_contact_lb->setStyleSheet("border-image: url(:/images/res/contact_list.png) 0 0 0 0 stretch;");
     ui->chat_user_list->setObjectName("chat_user_list");
     ui->chat_user_list->setStyleSheet(R"(
     #chat_user_list::item:selected {
@@ -138,9 +118,30 @@ ChatDialog::ChatDialog(QWidget *parent)
         ShowSearch(false);
     });
     ShowSearch(false);
+    ui->stackedWidget->setCurrentWidget(ui->chat_page);
     connect(ui->chat_user_list,&ChatUserList::sig_loading_chat_user,this,&ChatDialog::slot_loading_chat_user);
     addChatUserList();
     connect(ui->pushButton,&ClickedBtn::sig_changeIcon,this,&ChatDialog::changeicon);
+
+    QPixmap pixmap(":/images/res/a8e6197d37215df2cd7f1e135ab18e93.jpg");
+    ui->side_head_lb->setPixmap(pixmap); // 将图片设置到QLabel上
+    QPixmap scaledPixmap = pixmap.scaled( ui->side_head_lb->size(), Qt::KeepAspectRatio); // 将图片缩放到label的大小
+    ui->side_head_lb->setPixmap(scaledPixmap); // 将缩放后的图片设置到QLabel上
+    ui->side_head_lb->setScaledContents(true); // 设置QLabel自动缩放图片内容以适应大小
+
+    ui->side_chat_lb->setProperty("state","normal");
+
+    ui->side_chat_lb->SetState("normal","hover","pressed","selected_normal","selected_hover","selected_pressed");
+
+    ui->side_contact_lb->SetState("normal","hover","pressed","selected_normal","selected_hover","selected_pressed");
+
+    AddLBGroup(ui->side_chat_lb);
+    AddLBGroup(ui->side_contact_lb);
+
+    connect(ui->side_chat_lb, &StateWidget::clicked, this, &ChatDialog::slot_side_chat);
+    connect(ui->side_contact_lb, &StateWidget::clicked, this, &ChatDialog::slot_side_contact);
+    connect(ui->lineEdit,&QLineEdit::textChanged,this,&ChatDialog::slot_text_changed);
+    this->installEventFilter(this);
 }
 
 ChatDialog::~ChatDialog()
@@ -187,6 +188,40 @@ void ChatDialog::ShowSearch(bool bsearch)
     }
 }
 
+void ChatDialog::AddLBGroup(StateWidget *lb)
+{
+    _lb_list.push_back(lb);
+}
+
+void ChatDialog::ClearLabelState(StateWidget *lb)
+{
+    for(auto & ele: _lb_list){
+        if(ele == lb){
+            continue;
+        }
+
+        ele->ClearState();
+    }
+}
+
+void ChatDialog::handleGlobalMousePress(QMouseEvent *event)
+{
+    // 实现点击位置的判断和处理逻辑
+    // 先判断是否处于搜索模式，如果不处于搜索模式则直接返回
+    if( _mode != ChatUIMode::SearchMode){
+        return;
+    }
+
+    // 将鼠标点击位置转换为搜索列表坐标系中的位置
+    QPoint posInSearchList = ui->search_list->mapFromGlobal(event->globalPosition().toPoint());
+    // 判断点击位置是否在聊天列表的范围内
+    if (!ui->search_list->rect().contains(posInSearchList)) {
+        // 如果不在聊天列表内，清空输入框
+        ui->lineEdit->clear();
+        ShowSearch(false);
+    }
+}
+
 void ChatDialog::changeicon(bool isok)
 {
     if(isok==true)
@@ -217,4 +252,54 @@ void ChatDialog::closeEvent(QCloseEvent *event)
 {
     emit sig_CloseAll();
     QDialog::closeEvent(event);
+}
+
+void ChatDialog::slot_side_chat()
+{
+    qDebug()<< "receive side chat clicked";
+    ClearLabelState(ui->side_chat_lb);
+
+    _state = ChatUIMode::ChatMode;
+    _mode = ChatUIMode::ChatMode;
+
+    // 切换到聊天页面
+    ui->stackedWidget->setCurrentWidget(ui->chat_page);
+
+    // 直接管理列表显隐
+    ui->chat_user_list->show();
+    ui->search_list->hide();
+    ui->con_user_list->hide();
+}
+
+void ChatDialog::slot_side_contact()
+{
+    qDebug()<<"receive side contact clicked";
+    ClearLabelState(ui->side_contact_lb);
+
+    _state = ChatUIMode::ContactMode;
+    _mode = ChatUIMode::ContactMode;
+
+    // 切换到联系人页面
+    ui->stackedWidget->setCurrentWidget(ui->friend_apply_page);
+
+    // 直接管理列表显隐
+    ui->chat_user_list->hide();
+    ui->search_list->hide();
+    ui->con_user_list->show();
+}
+
+void ChatDialog::slot_text_changed(const QString &str)
+{
+    if(!str.isEmpty()){
+        ShowSearch(true);
+    }
+}
+
+bool ChatDialog::eventFilter(QObject *watched, QEvent *event)
+{
+    if(event->type()==QEvent::MouseButtonPress){
+        QMouseEvent*mouseEvent=static_cast<QMouseEvent*>(event);
+        handleGlobalMousePress(mouseEvent);
+    }
+    return QDialog::eventFilter(watched,event);
 }

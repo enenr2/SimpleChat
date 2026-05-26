@@ -258,6 +258,7 @@ void RegisterDialong::on_pushButton_clicked()
 
     QJsonObject json_obj;
     json_obj["user"]=ui->lineEdit->text();
+    json_obj["name"]=ui->lineEdit->text();
     json_obj["email"]=ui->lineEdit_2->text();
     json_obj["passwd"]=xorString(ui->lineEdit_3->text());
     json_obj["confirm"]=xorString(QString(ui->lineEdit_4->text()));

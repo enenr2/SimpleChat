@@ -20,4 +20,21 @@ void UserMgr::SetToken(QString token)
     _token=token;
 }
 
+int UserMgr::GetUid()
+{
+    return _uid;
+}
+
+QString UserMgr::GetName()
+{
+    return _name;
+}
+
 UserMgr::UserMgr() {}
+
+
+std::vector<std::shared_ptr<ApplyInfo> > UserMgr::GetApplyList()
+{
+    return _apply_list;
+}
+

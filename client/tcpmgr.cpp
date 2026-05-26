@@ -42,6 +42,7 @@ TcpMgr::TcpMgr():_host(""),_port(0),_b_recv_pending(false),_message_id(0),_messa
             QByteArray messageBody = _buffer.mid(0, _message_len);
             qDebug() << "receive body msg is " << messageBody ;
             _buffer = _buffer.mid(_message_len);
+            handleMsg(static_cast<ReqId>(_message_id), _message_len, messageBody);
         }
     });
     //5.15 之后版本

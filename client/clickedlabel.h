@@ -10,14 +10,17 @@ class ClichedLabel : public QLabel
 public:
     ClichedLabel(QWidget *parent=nullptr);
      void ChangeCur(ClickLbState now);
+    bool SetCurState(ClickLbState state);
+    void ResetNormalState();
+    ClickLbState GetCurState();
+    void SetState(QString normal="", QString hover="", QString press="",
+                  QString select="", QString select_hover="", QString select_press="");
     // QWidget interface
 protected:
     virtual void enterEvent(QEnterEvent *event) override;
     virtual void leaveEvent(QEvent *event) override;
-    void SetState(QString normal="", QString hover="", QString press="",
-                  QString select="", QString select_hover="", QString select_press="");
 
-    ClickLbState GetCurState();
+
     // QWidget interface
 protected:
     virtual void mousePressEvent(QMouseEvent *event) override;
@@ -38,5 +41,8 @@ signals:
     void clicked(void);
 };
 
+
+// UI文件中使用的是 ClickedLabel 但实际类名为 ClichedLabel，提供别名以兼容
+using ClickedLabel = ClichedLabel;
 
 #endif // CLICKEDLABEL_H

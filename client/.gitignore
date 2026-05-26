@@ -1,0 +1,11 @@
+build/
+*.o
+*.exe
+moc_*.cpp
+ui_*.h
+.qmake.stash
+Makefile
+Makefile.Debug
+Makefile.Release
+qrc_*.cpp
+file_resource.rc
