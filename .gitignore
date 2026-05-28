@@ -1,26 +1,11 @@
-# Build outputs 
-build/ 
-x64/ 
-*.aps 
-*.user 
- 
-# IDE 
-.vs/ 
-.qtcreator/ 
- 
-# Node.js 
-node_modules/ 
- 
-# Libraries 
-*.dll 
- 
-# Auto-save 
-*.autosave 
- 
-# OS 
-Thumbs.db 
-.DS_Store
-server/VerifyServer/config.json  
-server/ChatServer/config.ini  
-server/GateSaver/config.ini  
-server/StatusServer/config.ini  
+build/
+*.o
+*.exe
+moc_*.cpp
+ui_*.h
+.qmake.stash
+Makefile
+Makefile.Debug
+Makefile.Release
+qrc_*.cpp
+file_resource.rc

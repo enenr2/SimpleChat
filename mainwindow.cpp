@@ -19,7 +19,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(longin,&LonginDialog::switchReset,this,&MainWindow::slotswitchReset);
     connect(TcpMgr::GetInstance().get(),&TcpMgr::sig_switc_chatlg,this,&MainWindow::slotswitchchat);
 
-    emit TcpMgr::GetInstance()->sig_switc_chatlg();
+    //emit TcpMgr::GetInstance()->sig_switc_chatlg();
 
 }
 
