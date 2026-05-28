@@ -11,10 +11,11 @@ SimpleChat/
  │    ├── GateSaver/      # 网关服务
  │    ├── StatusServer/   # 状态服务
  │    └── VerifyServer/   # 验证服务（Node.js）
- ├── *.cpp / *.h          # Qt 桌面客户端源码（根目录）
- ├── file.pro             # Qt 项目文件
- ├── qss/                 # QSS 样式表
- └── res/                 # 客户端资源文件
+ └── client/              # Qt 桌面客户端
+      ├── *.cpp / *.h     # 客户端源码
+      ├── file.pro        # Qt 项目文件
+      ├── qss/            # QSS 样式表
+      └── res/            # 客户端资源文件
 ```
 
 ## 客户端功能
@@ -69,9 +70,9 @@ Qt C++ 桌面聊天客户端，基于 Qt 6.9 + MSVC 2022 构建。
 
 ### 客户端
 
-使用 Qt Creator 打开 `file.pro`，配置 Qt 6.9 + MSVC 2022 kit 编译运行。
+使用 Qt Creator 打开 `client/file.pro`，配置 Qt 6.9 + MSVC 2022 kit 编译运行。
 
-客户端配置文件 `config.ini`：
+客户端配置文件 `client/config.ini`：
 ```ini
 [GateServer]
 host=localhost
