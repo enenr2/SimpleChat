@@ -1,4 +1,3 @@
-
 const config_module = require('./config')
 const Redis = require("ioredis");
 

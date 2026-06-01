@@ -26,6 +26,8 @@ Qt C++ 桌面聊天客户端，基于 Qt 6.9 + MSVC 2022 构建。
 
 - **用户注册/登录** — 邮箱验证码注册，密码登录，密码重置
 - **好友搜索** — 搜索用户并发送好友申请
+  - FindSuccessDlg — 查找成功对话框（用户信息展示 + 添加好友）
+  - FindFailDlg — 查找失败对话框
 - **好友申请系统** — 查看待处理的好友申请，同意或拒绝
   - ApplyFriendPage — 好友申请页面列表
   - ApplyFriendItem — 单个申请条目（头像、昵称、认证按钮）
@@ -34,17 +36,26 @@ Qt C++ 桌面聊天客户端，基于 Qt 6.9 + MSVC 2022 构建。
   - ContactUserList — 自定义联系人列表
   - ConUserItem — 联系人条目
   - GroupTipItem — 分组提示条目
+  - FriendInfoPage — 好友信息详情页
 - **聊天界面** — 侧边栏导航（聊天/联系人），搜索框，消息列表
-- **TCP 连接管理** — 基于 QTcpSocket 的消息收发，协议解析
-- **HTTP 通信** — 基于 QNetworkAccessManager 的 REST API 请求
-- **界面美化** — 自定义 QSS 样式，标签系统，好友信息预览
+  - ChatPage — 聊天主页面
+  - ChatDialog — 聊天对话窗口
+  - BubbleFrame — 聊天气泡容器
+  - TextBubble / PictureBubble — 文字/图片气泡
+  - ChatUserWid — 聊天用户列表项
+- **TCP 连接管理** — 基于 QTcpSocket 的消息收发，自定义协议解析（TcpMgr）
+- **HTTP 通信** — 基于 QNetworkAccessManager 的 REST API 请求（HttpMgr）
+- **界面美化** — 自定义 QSS 样式，状态标签系统，头像展示
 
-### 数据结构
+### 自定义控件
 
-- `SearchInfo` / `AuthInfo` / `AuthRsp` — 用户搜索与认证信息
-- `FriendInfo` / `UserInfo` — 好友与用户数据模型
-- `TextChatData` / `TextChatMsg` — 聊天消息数据模型
-- `ApplyInfo` — 好友申请信息
+- `ClickedLabel` / `ClickedOnceLabel` — 可点击标签
+- `ClickedBtn` — 自定义按钮
+- `CustomizeEdit` — 自定义输入框
+- `MessageTextEdit` — 消息输入框
+- `TimerBtn` — 倒计时按钮（验证码场景）
+- `StateWidget` — 状态指示组件
+- `LoadingDlg` — 加载动画对话框
 
 ## 服务端
 
@@ -83,10 +94,6 @@ port=8080
 
 详见 [CHANGE_LOG.md](CHANGE_LOG.md)
 
-## Git
+## License
 
-```bash
-git add .
-git commit -m "描述你的改动"
-git push
-```
+MIT License

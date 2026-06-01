@@ -2,6 +2,7 @@
 #define CHATVIEW_H
 
 #include "qwidget.h"
+#include "userdata.h"
 #include <QObject>
 #include<QTimer>
 #include<QScrollArea>
@@ -15,6 +16,7 @@ public:
     explicit ChatView(QWidget *parent = nullptr);
     void appendChatItem(QWidget*item);
     void prependChatItem(QWidget*item);
+    void removeAllItem();
     void insertChatItem(QWidget*before,QWidget*item);
 signals:
 

@@ -3,6 +3,7 @@
 #include "ui_applyfriend.h"
 #include"usermgr.h"
 #include<QGraphicsDropShadowEffect>
+#include"tcpmgr.h"
 ApplyFriend::ApplyFriend(QWidget *parent)
     : QDialog(parent)
     , ui(new Ui::ApplyFriend)
@@ -730,6 +731,22 @@ void ApplyFriend::SlotAddFirendLabelByClickTip(QString text)
 void ApplyFriend::SlotApplyCancel()
 {
     qDebug() << "Slot Apply Cancel";
+    QJsonObject jsonobj;
+    auto uid=UserMgr::GetInstance()->GetUid();
+    jsonobj["uid"]=uid;
+    auto name=ui->name_ed->text();
+    if(name.isEmpty()){
+        name=ui->name_ed->placeholderText();
+    }
+    jsonobj["applyname"]=name;
+    auto backname=ui->back_ed->text();
+    if(backname.isEmpty()){
+        backname=ui->back_ed->placeholderText();
+    }
+    jsonobj["touid"]=_si->_uid;
+    QJsonDocument doc(jsonobj);
+    QByteArray jsonData=doc.toJson(QJsonDocument::Compact);
+    emit TcpMgr::GetInstance()->slot_send_data(ReqId::ID_AUTH_FRIEND_REQ,jsonData);
     this->hide();
     deleteLater();
 }

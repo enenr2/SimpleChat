@@ -7,7 +7,7 @@ _works(size), _nextIOService(0) {
         _works[i] = std::make_unique<Work>(boost::asio::make_work_guard(_ioServices[i]));
     }
 
-    //遍历多个ioservice，创建多个线程，每个线程内部启动ioservice
+    //ioservice叱蹋每叱诓ioservice
     for (std::size_t i = 0; i < _ioServices.size(); ++i) {
         _threads.emplace_back([this, i]() {
             _ioServices[i].run();
@@ -17,7 +17,7 @@ _works(size), _nextIOService(0) {
 
 AsioIOServicePool::~AsioIOServicePool() {
     Stop();
-    std::cout << "AsioIOServicePool destruct" << endl;
+    std::cout << "AsioIOServicePool destruct" << std::endl;
 }
 
 boost::asio::io_context& AsioIOServicePool::GetIOService() {
@@ -29,14 +29,14 @@ boost::asio::io_context& AsioIOServicePool::GetIOService() {
 }
 
 void AsioIOServicePool::Stop() {
-    //因为仅仅执行work.reset并不能让iocontext从run的状态中退出
-    //当iocontext已经绑定了读或写的监听事件后，还需要手动stop该服务。
+    //为执work.resetiocontextrun状态顺
+    //iocontext丫硕写募录螅要侄stop梅
     for (auto& ios : _ioServices) {
         ios.stop();
     }
 
     for (auto& work : _works) {
-        //把服务先停止
+        //逊停止
         work.reset();
     }
 

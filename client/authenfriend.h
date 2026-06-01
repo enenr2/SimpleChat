@@ -48,15 +48,15 @@ public slots:
     void SlotLabelTextChange(const QString& text);
     //输入框输入完成
     void SlotLabelEditFinished();
-    //输入标签显示提示框，点击提示框内容后添加好友便签
+   //输入标签显示提示框，点击提示框内容后添加好友便签
     void SlotAddFirendLabelByClickTip(QString text);
     //处理确认回调
     void SlotApplySure();
     //处理取消回调
     void SlotApplyCancel();
-
+   
 private:
-    std::shared_ptr<ApplyInfo> _apply_info;
+ 	std::shared_ptr<ApplyInfo> _apply_info;
     Ui::AuthenFriend *ui;
 };
 

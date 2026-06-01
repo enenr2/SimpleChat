@@ -101,7 +101,7 @@ void ClichedLabel::mousePressEvent(QMouseEvent *event)
             ChangeIron(ClickLbState::Normal);
             update();
         }
-        emit clicked();
+        emit clicked(this->text(), _curstate);
         return;
     }
     // 调用基类的mousePressEvent以保证正常的事件处理

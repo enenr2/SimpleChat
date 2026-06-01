@@ -40,8 +40,11 @@ enum ErrorCodes {
 	PasswdUpFailed = 1008,
 	PasswdInvalid = 1009,
 	RPCGetFailed = 1010,
-	RPCFailed=1011
+	RPCFailed=1011,
+	UidInvalid=1012,
+	TokenInvalid=1013,
 };
+
 
 class Defer {
 public:
@@ -53,4 +56,14 @@ private:
 	std::function<void()> func_;
 };
 
-#define CODEPREFIX "code_"
+#define USERIPPREFIX  "uip_"
+#define USERTOKENPREFIX  "utoken_"
+#define IPCOUNTPREFIX  "ipcount_"
+#define USER_BASE_INFO "ubaseinfo_"
+#define LOGIN_COUNT  "logincount"
+#define LOCK_COUNT "lockcount"
+
+//分布式锁的持有时间
+#define LOCK_TIME_OUT 10
+//分布式锁的重试时间
+#define ACQUIRE_TIME_OUT 5

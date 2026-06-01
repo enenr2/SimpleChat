@@ -24,24 +24,24 @@ int MysqlDao::RegUser(const std::string& name, const std::string& email, const s
 		if (con == nullptr) {
 			return false;
 		}
-		// ×¼±¸µ÷ÓÃ´æ´¢¹ı³Ì
-		unique_ptr < sql::PreparedStatement > stmt(con->_con->prepareStatement("CALL reg_user(?,?,?,@result)"));
-		// ÉèÖÃÊäÈë²ÎÊı
+		// ×¼Ã´æ´¢
+		std::unique_ptr < sql::PreparedStatement > stmt(con->_con->prepareStatement("CALL reg_user(?,?,?,@result)"));
+		// 
 		stmt->setString(1, name);
 		stmt->setString(2, email);
 		stmt->setString(3, pwd);
 
-		// ÓÉÓÚPreparedStatement²»Ö±½ÓÖ§³Ö×¢²áÊä³ö²ÎÊı£¬ÎÒÃÇĞèÒªÊ¹ÓÃ»á»°±äÁ¿»òÆäËû·½·¨À´»ñÈ¡Êä³ö²ÎÊıµÄÖµ
+		// PreparedStatementÖ±Ö§×¢ÒªÊ¹Ã»á»°È¡Öµ
 
-		  // Ö´ĞĞ´æ´¢¹ı³Ì
+		  // Ö´Ğ´æ´¢
 		stmt->execute();
-		// Èç¹û´æ´¢¹ı³ÌÉèÖÃÁË»á»°±äÁ¿»òÓĞÆäËû·½Ê½»ñÈ¡Êä³ö²ÎÊıµÄÖµ£¬Äã¿ÉÒÔÔÚÕâÀïÖ´ĞĞSELECT²éÑ¯À´»ñÈ¡ËüÃÇ
-	   // ÀıÈç£¬Èç¹û´æ´¢¹ı³ÌÉèÖÃÁËÒ»¸ö»á»°±äÁ¿@resultÀ´´æ´¢Êä³ö½á¹û£¬¿ÉÒÔÕâÑù»ñÈ¡£º
-		unique_ptr<sql::Statement> stmtResult(con->_con->createStatement());
-		unique_ptr<sql::ResultSet> res(stmtResult->executeQuery("SELECT @result AS result"));
+		// æ´¢Ë»á»°Ê½È¡ÖµÖ´SELECTÑ¯È¡
+	   // ç£¬æ´¢Ò»á»°@resultæ´¢È¡
+		std::unique_ptr<sql::Statement> stmtResult(con->_con->createStatement());
+		std::unique_ptr<sql::ResultSet> res(stmtResult->executeQuery("SELECT @result AS result"));
 		if (res->next()) {
 			int result = res->getInt("result");
-			cout << "Result: " << result << endl;
+			cout << "Result: " << result << std::endl;
 			pool_->returnConnection(std::move(con));
 			return result;
 		}
@@ -70,17 +70,17 @@ int MysqlDao::RegUserTransaction(const std::string& name, const std::string& ema
 		});
 
 	try {
-		//¿ªÊ¼ÊÂÎñ
+		//Ê¼
 		con->_con->setAutoCommit(false);
-		//Ö´ĞĞµÚÒ»¸öÊı¾İ¿â²Ù×÷£¬¸ù¾İemail²éÕÒÓÃ»§
-			// ×¼±¸²éÑ¯Óï¾ä
+		//Ö´ĞµÒ»İ¿emailÃ»
+			// ×¼Ñ¯
 
 		std::unique_ptr<sql::PreparedStatement> pstmt_email(con->_con->prepareStatement("SELECT 1 FROM user WHERE email = ?"));
 
-		// °ó¶¨²ÎÊı
+		// ó¶¨²
 		pstmt_email->setString(1, email);
 
-		// Ö´ĞĞ²éÑ¯
+		// Ö´Ğ²Ñ¯
 		std::unique_ptr<sql::ResultSet> res_email(pstmt_email->executeQuery());
 
 		auto email_exist = res_email->next();
@@ -90,13 +90,13 @@ int MysqlDao::RegUserTransaction(const std::string& name, const std::string& ema
 			return 0;
 		}
 
-		// ×¼±¸²éÑ¯ÓÃ»§ÃûÊÇ·ñÖØ¸´
+		// ×¼Ñ¯Ã»Ç·Ø¸
 		std::unique_ptr<sql::PreparedStatement> pstmt_name(con->_con->prepareStatement("SELECT 1 FROM user WHERE name = ?"));
 
-		// °ó¶¨²ÎÊı
+		// ó¶¨²
 		pstmt_name->setString(1, name);
 
-		// Ö´ĞĞ²éÑ¯
+		// Ö´Ğ²Ñ¯
 		std::unique_ptr<sql::ResultSet> res_name(pstmt_name->executeQuery());
 
 		auto name_exist = res_name->next();
@@ -106,17 +106,17 @@ int MysqlDao::RegUserTransaction(const std::string& name, const std::string& ema
 			return 0;
 		}
 
-		// ×¼±¸¸üĞÂÓÃ»§id
+		// ×¼Ã»id
 		std::unique_ptr<sql::PreparedStatement> pstmt_upid(con->_con->prepareStatement("UPDATE user_id SET id = id + 1"));
 
-		// Ö´ĞĞ¸üĞÂ
+		// Ö´Ğ¸
 		pstmt_upid->executeUpdate();
 
-		// »ñÈ¡¸üĞÂºóµÄ id Öµ
+		// È¡Âº id Öµ
 		std::unique_ptr<sql::PreparedStatement> pstmt_uid(con->_con->prepareStatement("SELECT id FROM user_id"));
 		std::unique_ptr<sql::ResultSet> res_uid(pstmt_uid->executeQuery());
 		int newId = 0;
-		// ´¦Àí½á¹û¼¯
+		// 
 		if (res_uid->next()) {
 			newId = res_uid->getInt("id");
 		}
@@ -126,7 +126,7 @@ int MysqlDao::RegUserTransaction(const std::string& name, const std::string& ema
 			return -1;
 		}
 
-		// ²åÈëuserĞÅÏ¢
+		// userÏ¢
 		std::unique_ptr<sql::PreparedStatement> pstmt_insert(con->_con->prepareStatement("INSERT INTO user (uid, name, email, pwd, nick, icon) "
 			"VALUES (?, ?, ?, ?,?,?)"));
 		pstmt_insert->setInt(1, newId);
@@ -135,15 +135,15 @@ int MysqlDao::RegUserTransaction(const std::string& name, const std::string& ema
 		pstmt_insert->setString(4, pwd);
 		pstmt_insert->setString(5, name);
 		pstmt_insert->setString(6, icon);
-		//Ö´ĞĞ²åÈë
+		//Ö´Ğ²
 		pstmt_insert->executeUpdate();
-		// Ìá½»ÊÂÎñ
+		// á½»
 		con->_con->commit();
 		std::cout << "newuser insert into user success" << std::endl;
 		return newId;
 	}
 	catch (sql::SQLException& e) {
-		// Èç¹û·¢Éú´íÎó£¬»Ø¹öÊÂÎñ
+		// ó£¬»Ø¹
 		if (con) {
 			con->_con->rollback();
 		}
@@ -161,16 +161,16 @@ bool MysqlDao::CheckEmail(const std::string& name, const std::string& email) {
 			return false;
 		}
 
-		// ×¼±¸²éÑ¯Óï¾ä
+		// ×¼Ñ¯
 		std::unique_ptr<sql::PreparedStatement> pstmt(con->_con->prepareStatement("SELECT email FROM user WHERE name = ?"));
 
-		// °ó¶¨²ÎÊı
+		// ó¶¨²
 		pstmt->setString(1, name);
 
-		// Ö´ĞĞ²éÑ¯
+		// Ö´Ğ²Ñ¯
 		std::unique_ptr<sql::ResultSet> res(pstmt->executeQuery());
 
-		// ±éÀú½á¹û¼¯
+		// 
 		while (res->next()) {
 			std::cout << "Check Email: " << res->getString("email") << std::endl;
 			if (email != res->getString("email")) {
@@ -198,14 +198,14 @@ bool MysqlDao::UpdatePwd(const std::string& name, const std::string& newpwd) {
 			return false;
 		}
 
-		// ×¼±¸²éÑ¯Óï¾ä
+		// ×¼Ñ¯
 		std::unique_ptr<sql::PreparedStatement> pstmt(con->_con->prepareStatement("UPDATE user SET pwd = ? WHERE name = ?"));
 
-		// °ó¶¨²ÎÊı
+		// ó¶¨²
 		pstmt->setString(2, name);
 		pstmt->setString(1, newpwd);
 
-		// Ö´ĞĞ¸üĞÂ
+		// Ö´Ğ¸
 		int updateCount = pstmt->executeUpdate();
 
 		std::cout << "Updated rows: " << updateCount << std::endl;
@@ -233,17 +233,17 @@ bool MysqlDao::CheckPwd(const std::string& email, const std::string& pwd, UserIn
 
 	try {
 
-		// ×¼±¸SQLÓï¾ä
+		// ×¼SQL
 		std::unique_ptr<sql::PreparedStatement> pstmt(con->_con->prepareStatement("SELECT * FROM user WHERE email = ?"));
-		pstmt->setString(1, email); // ½«usernameÌæ»»ÎªÄãÒª²éÑ¯µÄÓÃ»§Ãû
+		pstmt->setString(1, email); // usernameæ»»ÎªÒªÑ¯Ã»
 
-		// Ö´ĞĞ²éÑ¯
+		// Ö´Ğ²Ñ¯
 		std::unique_ptr<sql::ResultSet> res(pstmt->executeQuery());
 		std::string origin_pwd = "";
-		// ±éÀú½á¹û¼¯
+		// 
 		while (res->next()) {
 			origin_pwd = res->getString("pwd");
-			// Êä³ö²éÑ¯µ½µÄÃÜÂë
+			// Ñ¯
 			std::cout << "Password: " << origin_pwd << std::endl;
 			break;
 		}
@@ -275,25 +275,25 @@ bool MysqlDao::TestProcedure(const std::string& email, int& uid, string& name) {
 		Defer defer([this, &con]() {
 			pool_->returnConnection(std::move(con));
 			});
-		// ×¼±¸µ÷ÓÃ´æ´¢¹ı³Ì
-		unique_ptr < sql::PreparedStatement > stmt(con->_con->prepareStatement("CALL test_procedure(?,@userId,@userName)"));
-		// ÉèÖÃÊäÈë²ÎÊı
+		// ×¼Ã´æ´¢
+		std::unique_ptr < sql::PreparedStatement > stmt(con->_con->prepareStatement("CALL test_procedure(?,@userId,@userName)"));
+		// 
 		stmt->setString(1, email);
 
-		// ÓÉÓÚPreparedStatement²»Ö±½ÓÖ§³Ö×¢²áÊä³ö²ÎÊı£¬ÎÒÃÇĞèÒªÊ¹ÓÃ»á»°±äÁ¿»òÆäËû·½·¨À´»ñÈ¡Êä³ö²ÎÊıµÄÖµ
+		// PreparedStatementÖ±Ö§×¢ÒªÊ¹Ã»á»°È¡Öµ
 
-		  // Ö´ĞĞ´æ´¢¹ı³Ì
+		  // Ö´Ğ´æ´¢
 		stmt->execute();
-		// Èç¹û´æ´¢¹ı³ÌÉèÖÃÁË»á»°±äÁ¿»òÓĞÆäËû·½Ê½»ñÈ¡Êä³ö²ÎÊıµÄÖµ£¬Äã¿ÉÒÔÔÚÕâÀïÖ´ĞĞSELECT²éÑ¯À´»ñÈ¡ËüÃÇ
-	   // ÀıÈç£¬Èç¹û´æ´¢¹ı³ÌÉèÖÃÁËÒ»¸ö»á»°±äÁ¿@resultÀ´´æ´¢Êä³ö½á¹û£¬¿ÉÒÔÕâÑù»ñÈ¡£º
-		unique_ptr<sql::Statement> stmtResult(con->_con->createStatement());
-		unique_ptr<sql::ResultSet> res(stmtResult->executeQuery("SELECT @userId AS uid"));
+		// æ´¢Ë»á»°Ê½È¡ÖµÖ´SELECTÑ¯È¡
+	   // ç£¬æ´¢Ò»á»°@resultæ´¢È¡
+		std::unique_ptr<sql::Statement> stmtResult(con->_con->createStatement());
+		std::unique_ptr<sql::ResultSet> res(stmtResult->executeQuery("SELECT @userId AS uid"));
 		if (!(res->next())) {
 			return false;
 		}
 
 		uid = res->getInt("uid");
-		cout << "uid: " << uid << endl;
+		cout << "uid: " << uid << std::endl;
 
 		stmtResult.reset(con->_con->createStatement());
 		res.reset(stmtResult->executeQuery("SELECT @userName AS name"));
@@ -302,7 +302,7 @@ bool MysqlDao::TestProcedure(const std::string& email, int& uid, string& name) {
 		}
 
 		name = res->getString("name");
-		cout << "name: " << name << endl;
+		cout << "name: " << name << std::endl;
 		return true;
 
 	}
@@ -322,16 +322,16 @@ bool MysqlDao::TestProcedure(const std::string& email, int& uid, string& name) {
 //			return false;
 //		}
 //
-//		// ×¼±¸²éÑ¯Óï¾ä
+//		// ×¼Ñ¯
 //		std::unique_ptr<sql::PreparedStatement> pstmt(con->_con->prepareStatement("SELECT email FROM user WHERE name = ?"));
 //
-//		// °ó¶¨²ÎÊı
+//		// ó¶¨²
 //		pstmt->setString(1, name);
 //
-//		// Ö´ĞĞ²éÑ¯
+//		// Ö´Ğ²Ñ¯
 //		std::unique_ptr<sql::ResultSet> res(pstmt->executeQuery());
 //
-//		// ±éÀú½á¹û¼¯
+//		// 
 //		while (res->next()) {
 //			std::cout << "Check Email: " << res->getString("email") << std::endl;
 //			if (email != res->getString("email")) {
@@ -359,14 +359,14 @@ bool MysqlDao::TestProcedure(const std::string& email, int& uid, string& name) {
 //			return false;
 //		}
 //
-//		// ×¼±¸²éÑ¯Óï¾ä
+//		// ×¼Ñ¯
 //		std::unique_ptr<sql::PreparedStatement> pstmt(con->_con->prepareStatement("UPDATE user SET pwd = ? WHERE name = ?"));
 //
-//		// °ó¶¨²ÎÊı
+//		// ó¶¨²
 //		pstmt->setString(2, name);
 //		pstmt->setString(1, newpwd);
 //
-//		// Ö´ĞĞ¸üĞÂ
+//		// Ö´Ğ¸
 //		int updateCount = pstmt->executeUpdate();
 //
 //		std::cout << "Updated rows: " << updateCount << std::endl;
@@ -381,3 +381,202 @@ bool MysqlDao::TestProcedure(const std::string& email, int& uid, string& name) {
 //		return false;
 //	}
 //}
+
+std::shared_ptr<UserInfo> MysqlDao::GetUser(int uid) {
+	auto con = pool_->getConnection();
+	if (con == nullptr) {
+		return nullptr;
+	}
+
+	Defer defer([this, &con]() {
+		pool_->returnConnection(std::move(con));
+		});
+
+	try {
+		// å‡†å¤‡SQLè¯­å¥
+		std::unique_ptr<sql::PreparedStatement> pstmt(con->_con->prepareStatement("SELECT * FROM user WHERE uid = ?"));
+		pstmt->setInt(1, uid); // å°†uidæ›¿æ¢ä¸ºä½ è¦æŸ¥è¯¢çš„uid
+
+		// æ‰§è¡ŒæŸ¥è¯¢
+		std::unique_ptr<sql::ResultSet> res(pstmt->executeQuery());
+		std::shared_ptr<UserInfo> user_ptr = nullptr;
+		// éå†ç»“æœé›†
+		while (res->next()) {
+			user_ptr.reset(new UserInfo);
+			user_ptr->pwd = res->getString("pwd");
+			user_ptr->email = res->getString("email");
+			user_ptr->name = res->getString("name");
+			user_ptr->nick = res->getString("nick");
+			user_ptr->desc = res->getString("desc");
+			user_ptr->sex = res->getInt("sex");
+			user_ptr->icon = res->getString("icon");
+			user_ptr->uid = uid;
+			break;
+		}
+		return user_ptr;
+	}
+	catch (sql::SQLException& e) {
+		std::cerr << "SQLException: " << e.what();
+		std::cerr << " (MySQL error code: " << e.getErrorCode();
+		std::cerr << ", SQLState: " << e.getSQLState() << " )" << std::endl;
+		return nullptr;
+	}
+}
+
+std::shared_ptr<UserInfo> MysqlDao::GetUser(std::string name) {
+	auto con = pool_->getConnection();
+	if (con == nullptr) {
+		return nullptr;
+	}
+
+	Defer defer([this, &con]() {
+		pool_->returnConnection(std::move(con));
+		});
+	try {
+		// å‡†å¤‡SQLè¯­å¥
+		std::unique_ptr<sql::PreparedStatement> pstmt(con->_con->prepareStatement("SELECT * FROM user WHERE name = ?"));
+		pstmt->setString(1, name); // æ›¿æ¢name
+
+		// æ‰§è¡ŒæŸ¥è¯¢
+		std::unique_ptr<sql::ResultSet> res(pstmt->executeQuery());
+		std::shared_ptr<UserInfo> user_ptr = nullptr;
+		// éå†ç»“æœé›†
+		while (res->next()) {
+			user_ptr.reset(new UserInfo);
+			user_ptr->pwd = res->getString("pwd");
+			user_ptr->email = res->getString("email");
+			user_ptr->name = res->getString("name");
+			user_ptr->nick = res->getString("nick");
+			user_ptr->desc = res->getString("desc");
+			user_ptr->sex = res->getInt("sex");
+			user_ptr->icon = res->getString("icon");
+			user_ptr->uid = res->getInt("uid");
+			break;
+		}
+		return user_ptr;
+	}
+	catch (sql::SQLException& e) {
+		std::cerr << "SQLException: " << e.what();
+		std::cerr << " (MySQL error code: " << e.getErrorCode();
+		std::cerr << ", SQLState: " << e.getSQLState() << " )" << std::endl;
+		return nullptr;
+	}
+}
+
+bool MysqlDao::AddFriendApply(const int& from, const int& to) {
+	auto con= pool_->getConnection();
+	if (con == nullptr) {
+		return false;
+	}
+	Defer defer([this, &con]() {
+		pool_->returnConnection(std::move(con));
+		});
+	try {
+		std::unique_ptr<sql::PreparedStatement> pstmt(con->_con->prepareStatement("INSERT INTO friend_apply (from_uid, to_uid) VALUES (?, ?)"
+		"ON DUPLICATE KEY UPDATE from_uid=from_uid"));
+		pstmt->setInt(1, from);
+		pstmt->setInt(2, to);
+		int rowAddected=pstmt->executeUpdate();
+		if (rowAddected < 0) {
+			return false;
+		}
+	}catch (sql::SQLException& e) {
+		std::cerr << "SQLException: " << e.what();
+		std::cerr << " (MySQL error code: " << e.getErrorCode();
+		std::cerr << ", SQLState: " << e.getSQLState() << " )" << std::endl;
+		return false;
+	}
+	return true;
+}
+
+bool MysqlDao::GetApplyList(const int& to_uid, std::vector<std::shared_ptr<ApplyInfo>>& list, int begin, int limit) {
+	auto con = pool_->getConnection();
+	if (con == nullptr) {
+		return false;
+	}
+
+	Defer defer([this, &con]() {
+		pool_->returnConnection(std::move(con));
+		});
+
+	try {
+		std::unique_ptr<sql::PreparedStatement> pstmt(con->_con->prepareStatement("Select apply.from_uid ,apply.status,user.name,user.nick,user.sex from friend_apply as "
+			"apply join user on apply.from_uid = user.uid where apply.to_uid = ? and apply.id> ?order by apply.id desc limit ?"));
+		pstmt->setInt(1, to_uid);
+		pstmt->setInt(2, begin);
+		pstmt->setInt(3, limit);
+		std::unique_ptr<sql::ResultSet> res(pstmt->executeQuery());
+		while (res->next()) {
+			int uid = res->getInt("from_uid");
+			int status = res->getInt("status");
+			std::string name = res->getString("name");
+			std::string nick = res->getString("nick");
+			auto sex = res->getInt("sex");
+			auto apply_ptr = std::make_shared<ApplyInfo>(uid, name, "", "", nick, sex, status);
+			list.push_back(apply_ptr);
+		}
+	}
+
+	catch (sql::SQLException& e) {
+		std::cerr << "SQLException: " << e.what();
+		std::cerr << " (MySQL error code: " << e.getErrorCode();
+		std::cerr << ", SQLState: " << e.getSQLState() << " )" << std::endl;
+		return false;
+	}
+
+	return true;
+}
+
+bool MysqlDao::AuthFriendApply(const int& from, const int& to) {
+	Json::Reader reader;
+	Json::Value root;
+	return true;
+}
+
+bool MysqlDao::AddFriend(const int& from, const int& to, const std::string& back_name) {
+	return true;
+}
+
+bool MysqlDao::GetFriendList(int self_id, std::vector<std::shared_ptr<UserInfo>>& user_info_list) {
+	auto con = pool_->getConnection();
+	if (con == nullptr) {
+		return false;
+	}
+
+	Defer defer([this, &con]() {
+		pool_->returnConnection(std::move(con));
+		});
+
+
+	try {
+		// å‡†å¤‡SQLè¯­å¥, æ ¹æ®èµ·å§‹idå’Œé™åˆ¶æ¡æ•°è¿”å›åˆ—è¡¨
+		std::unique_ptr<sql::PreparedStatement> pstmt(con->_con->prepareStatement("select * from friend where self_id = ? "));
+
+		pstmt->setInt(1, self_id); // å°†uidæ›¿æ¢ä¸ºä½ è¦æŸ¥è¯¢çš„uid
+
+		// æ‰§è¡ŒæŸ¥è¯¢
+		std::unique_ptr<sql::ResultSet> res(pstmt->executeQuery());
+		// éå†ç»“æœé›†
+		while (res->next()) {
+			auto friend_id = res->getInt("friend_id");
+			auto back = res->getString("back");
+			//å†ä¸€æ¬¡æŸ¥è¯¢friend_idå¯¹åº”çš„ä¿¡æ¯
+			auto user_info = GetUser(friend_id);
+			if (user_info == nullptr) {
+				continue;
+			}
+
+			user_info->back = user_info->name;
+			user_info_list.push_back(user_info);
+		}
+		return true;
+	}
+	catch (sql::SQLException& e) {
+		std::cerr << "SQLException: " << e.what();
+		std::cerr << " (MySQL error code: " << e.getErrorCode();
+		std::cerr << ", SQLState: " << e.getSQLState() << " )" << std::endl;
+		return false;
+	}
+
+	return true;
+}

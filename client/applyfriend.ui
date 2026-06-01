@@ -58,11 +58,11 @@
       </property>
       <item>
        <widget class="QLabel" name="apply_title_lb">
-        <property name="text">
-         <string>申请添加好友</string>
-        </property>
         <property name="styleSheet">
          <string notr="true">font-size: 18px; font-weight: bold; color: #1e1e1e;</string>
+        </property>
+        <property name="text">
+         <string>申请添加好友</string>
         </property>
        </widget>
       </item>
@@ -93,14 +93,14 @@
           <height>30</height>
          </size>
         </property>
+        <property name="styleSheet">
+         <string notr="true">font-size: 16px; color: #999; border-radius: 15px;</string>
+        </property>
         <property name="text">
          <string>✕</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignmentFlag::AlignCenter</set>
-        </property>
-        <property name="styleSheet">
-         <string notr="true">font-size: 16px; color: #999; border-radius: 15px;</string>
         </property>
        </widget>
       </item>
@@ -161,21 +161,21 @@
           <height>50</height>
          </size>
         </property>
-        <property name="text">
-         <string/>
-        </property>
         <property name="styleSheet">
          <string notr="true">border-radius: 25px; background-color: #e0e0e0;</string>
+        </property>
+        <property name="text">
+         <string/>
         </property>
        </widget>
       </item>
       <item>
        <widget class="QLabel" name="friend_name_lb">
-        <property name="text">
-         <string>好友昵称</string>
-        </property>
         <property name="styleSheet">
          <string notr="true">font-size: 16px; font-weight: bold; color: #1e1e1e;</string>
+        </property>
+        <property name="text">
+         <string>好友昵称</string>
         </property>
        </widget>
       </item>
@@ -633,11 +633,6 @@
    <class>CustomizeEdit</class>
    <extends>QLineEdit</extends>
    <header location="global">customizeedit.h</header>
-  </customwidget>
-  <customwidget>
-   <class>ClickedOnceLabel</class>
-   <extends>QLabel</extends>
-   <header>clickedoncelabel.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

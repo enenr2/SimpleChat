@@ -221,24 +221,25 @@ private:
 	std::atomic<int> _fail_count;
 };
 
-struct UserInfo {
-	std::string name;
-	std::string pwd;
-	int uid;
-	std::string email;
-};
 
 class MysqlDao
 {
 public:
 	MysqlDao();
 	~MysqlDao();
+	std::shared_ptr<UserInfo> GetUser(int uid);
+	std::shared_ptr<UserInfo> GetUser(std::string name);
+	bool AddFriendApply(const int& from, const int& to);
 	int RegUser(const std::string& name, const std::string& email, const std::string& pwd);
 	int RegUserTransaction(const std::string& name, const std::string& email, const std::string& pwd, const std::string& icon);
 	bool CheckEmail(const std::string& name, const std::string& email);
 	bool UpdatePwd(const std::string& name, const std::string& newpwd);
 	bool CheckPwd(const std::string& name, const std::string& pwd, UserInfo& userInfo);
 	bool TestProcedure(const std::string& email, int& uid, std::string& name);
+	bool AuthFriendApply(const int& from, const int& to);
+	bool AddFriend(const int& from, const int& to, const std::string& back_name);
+	bool GetFriendList(int self_id, std::vector<std::shared_ptr<UserInfo>>& user_info_list);
+	bool GetApplyList(const int& to_uid, std::vector<std::shared_ptr<ApplyInfo>>& list, int begin, int limit);
 private:
 	std::unique_ptr<MySqlPool> pool_;
 };

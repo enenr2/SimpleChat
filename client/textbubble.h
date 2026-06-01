@@ -8,7 +8,7 @@ class TextBubble : public BubbleFrame
 {
     Q_OBJECT
 public:
-    TextBubble(ChatRole role,const QString &text,QWidget*parent);
+    TextBubble(ChatRole role,const QString &text,QWidget*parent=nullptr);
     void setPlainText(const QString &text);
     void adjustTextHeight();
     void initStyleSheet();

@@ -38,11 +38,10 @@ private:
     ClickLbState _curstate;
 
 signals:
-    void clicked(void);
+    void clicked(QString, ClickLbState);
 };
 
 
-// UI文件中使用的是 ClickedLabel 但实际类名为 ClichedLabel，提供别名以兼容
 using ClickedLabel = ClichedLabel;
 
 #endif // CLICKEDLABEL_H

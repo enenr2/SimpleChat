@@ -9,6 +9,7 @@
 #include<jdbc/cppconn/statement.h>
 #include<jdbc/cppconn/resultset.h>
 #include<jdbc/cppconn/exception.h>
+#include"data.h"
 
 class SqlConnection {
 public:
@@ -221,18 +222,12 @@ private:
 	std::atomic<int> _fail_count;
 };
 
-struct UserInfo {
-	std::string name;
-	std::string pwd;
-	int uid;
-	std::string email;
-};
-
 class MysqlDao
 {
 public:
 	MysqlDao();
 	~MysqlDao();
+	std::shared_ptr<UserInfo> GetUser(int uid);
 	int RegUser(const std::string& name, const std::string& email, const std::string& pwd);
 	int RegUserTransaction(const std::string& name, const std::string& email, const std::string& pwd, const std::string& icon);
 	bool CheckEmail(const std::string& name, const std::string& email);
