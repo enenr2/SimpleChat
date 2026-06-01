@@ -7,7 +7,8 @@
 ```
 SimpleChat/
  ├── server/              # 服务端（微服务架构）
- │    ├── ChatServer/     # 主聊天服务器（C++, gRPC, MySQL, Redis）
+ │    ├── ChatServer/     # 聊天服务器 1（C++, gRPC, MySQL, Redis）
+ │    ├── ChatServer2/    # 聊天服务器 2（多实例部署）
  │    ├── GateSaver/      # 网关服务
  │    ├── StatusServer/   # 状态服务
  │    └── VerifyServer/   # 验证服务（Node.js）
@@ -59,7 +60,8 @@ Qt C++ 桌面聊天客户端，基于 Qt 6.9 + MSVC 2022 构建。
 
 ## 服务端
 
-- **ChatServer** — 主聊天服务器，处理消息路由和持久化（C++/gRPC）
+- **ChatServer** — 聊天服务器 1，处理消息路由和持久化（C++/gRPC）
+- **ChatServer2** — 聊天服务器 2，多实例部署，同级对等通信
 - **GateSaver** — 网关服务，请求转发与负载均衡
 - **StatusServer** — 状态服务，用户在线状态管理
 - **VerifyServer** — 验证码服务（Node.js）
