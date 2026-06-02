@@ -25,10 +25,8 @@ x64/
 *.sdf
 *.opensdf
 *.sln.docstates
-*.user
 *.suo
-*.filters
-*.sln
-*.vcxproj
 *.vcxproj.user
 Win32/
+debug/
+release/
