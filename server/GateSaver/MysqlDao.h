@@ -27,9 +27,9 @@ public:
 				sql::mysql::MySQL_Driver* driver = sql::mysql::get_mysql_driver_instance();
 				auto* con = driver->connect(url_, user_, pass_);
 				con->setSchema(schema_);
-				// 获取当前时间戳
+				
 				auto currentTime = std::chrono::system_clock::now().time_since_epoch();
-				// 将时间戳转换为秒
+				
 				long long timestamp = std::chrono::duration_cast<std::chrono::seconds>(currentTime).count();
 				pool_.push(std::make_unique<SqlConnection>(con, timestamp));
 			}
@@ -44,23 +44,23 @@ public:
 			_check_thread.detach();
 		}
 		catch (sql::SQLException& e) {
-			// 处理异常
+			
 			std::cout << "mysql pool init failed, error is " << e.what() << std::endl;
 		}
 	}
 
 	void checkConnectionPro() {
-		// 1)先读取“目标处理数”
+		
 		size_t targetCount;
 		{
 			std::lock_guard<std::mutex> guard(mutex_);
 			targetCount = pool_.size();
 		}
 
-		//2 当前已经处理的数量
+		
 		size_t processed = 0;
 
-		//3 时间戳
+		
 		auto now = std::chrono::system_clock::now().time_since_epoch();
 		long long timestamp = std::chrono::duration_cast<std::chrono::seconds>(now).count();
 
@@ -76,7 +76,7 @@ public:
 			}
 
 			bool healthy = true;
-			//解锁后做检查/重连逻辑
+			
 			if (timestamp - con->_last_oper_time >= 5) {
 				try {
 					std::unique_ptr<sql::Statement> stmt(con->_con->createStatement());
@@ -138,9 +138,9 @@ public:
 	void checkConnection() {
 		std::lock_guard<std::mutex> guard(mutex_);
 		int poolsize = pool_.size();
-		// 获取当前时间戳
+		
 		auto currentTime = std::chrono::system_clock::now().time_since_epoch();
-		// 将时间戳转换为秒
+		
 		long long timestamp = std::chrono::duration_cast<std::chrono::seconds>(currentTime).count();
 		for (int i = 0; i < poolsize; i++) {
 			auto con = std::move(pool_.front());
@@ -157,11 +157,11 @@ public:
 				std::unique_ptr<sql::Statement> stmt(con->_con->createStatement());
 				stmt->executeQuery("SELECT 1");
 				con->_last_oper_time = timestamp;
-				//std::cout << "execute timer alive query , cur is " << timestamp << std::endl;
+				
 			}
 			catch (sql::SQLException& e) {
 				std::cout << "Error keeping connection alive: " << e.what() << std::endl;
-				// 重新创建连接并替换旧的连接
+				
 				sql::mysql::MySQL_Driver* driver = sql::mysql::get_mysql_driver_instance();
 				auto* newcon = driver->connect(url_, user_, pass_);
 				newcon->setSchema(schema_);

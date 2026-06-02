@@ -151,7 +151,7 @@ void SearchList::slot_item_clicked(QListWidgetItem *item)
 
 void SearchList::slot_user_search(std::shared_ptr<SearchInfo> si)
 {
-    waitPending(true);
+    waitPending(false);
     if(si==nullptr){
         _find_dlg=std::make_shared<FindFailDlg>(this);
     }else{

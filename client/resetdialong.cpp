@@ -190,7 +190,7 @@ void ResetDialong::initHandlers()
         auto email = jsonObj["email"].toString();
         showTip(tr("重置成功,点击返回登录"), true);
         qDebug()<< "email is " << email ;
-        qDebug()<< "user uuid is " <<  jsonObj["uuid"].toString();
+    
     });
 }
 void ResetDialong::on_pushButton_3_clicked()

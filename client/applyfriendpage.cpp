@@ -39,13 +39,13 @@ void ApplyFriendPage::AddNewApply(std::shared_ptr<AddFriendApply> apply)
     ui->apply_friend_list->setItemWidget(item, apply_item);
     apply_item->ShowAddBtn(true);
     _unauth_items[apply->_from_uid] = apply_item;
-    //收到审核好友信号
-    // connect(apply_item, &ApplyFriendItem::sig_auth_friend, [this](std::shared_ptr<ApplyInfo> apply_info) {
-    //     auto* authFriend = new AuthenFriend(this);
-    //     authFriend->setModal(true);
-    //     authFriend->SetApplyInfo(apply_info);
-    //     authFriend->show();
-    // });
+	//收到认证好友信号
+	connect(apply_item, &ApplyFriendItem::sig_auth_friend, [this](std::shared_ptr<ApplyInfo> apply_info) {
+		auto* authFriend = new AuthenFriend(this);
+		authFriend->setModal(true);
+		authFriend->SetApplyInfo(apply_info);
+		authFriend->show();
+	});
 }
 
 void ApplyFriendPage::paintEvent(QPaintEvent *event)

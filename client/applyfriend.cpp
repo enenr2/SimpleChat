@@ -731,29 +731,30 @@ void ApplyFriend::SlotAddFirendLabelByClickTip(QString text)
 void ApplyFriend::SlotApplyCancel()
 {
     qDebug() << "Slot Apply Cancel";
-    QJsonObject jsonobj;
-    auto uid=UserMgr::GetInstance()->GetUid();
-    jsonobj["uid"]=uid;
-    auto name=ui->name_ed->text();
-    if(name.isEmpty()){
-        name=ui->name_ed->placeholderText();
-    }
-    jsonobj["applyname"]=name;
-    auto backname=ui->back_ed->text();
-    if(backname.isEmpty()){
-        backname=ui->back_ed->placeholderText();
-    }
-    jsonobj["touid"]=_si->_uid;
-    QJsonDocument doc(jsonobj);
-    QByteArray jsonData=doc.toJson(QJsonDocument::Compact);
-    emit TcpMgr::GetInstance()->slot_send_data(ReqId::ID_AUTH_FRIEND_REQ,jsonData);
     this->hide();
     deleteLater();
 }
 
 void ApplyFriend::SlotApplySure()
 {
-    qDebug()<<"Slot Apply Sure called" ;
+    qDebug()<<"Slot Apply Sure called, touid=" << _si->_uid;
+    QJsonObject jsonobj;
+    auto uid = UserMgr::GetInstance()->GetUid();
+    jsonobj["uid"] = uid;
+    auto name = ui->name_ed->text();
+    if(name.isEmpty()){
+        name = ui->name_ed->placeholderText();
+    }
+    jsonobj["applyname"] = name;
+    auto bakname = ui->back_ed->text();
+    if(bakname.isEmpty()){
+        bakname = ui->back_ed->placeholderText();
+    }
+    jsonobj["bakname"] = bakname;
+    jsonobj["touid"] = _si->_uid;
+    QJsonDocument doc(jsonobj);
+    QByteArray jsonData = doc.toJson(QJsonDocument::Compact);
+    emit TcpMgr::GetInstance()->sig_send_data(ReqId::ID_ADD_FRIEND_REQ, jsonData);
     this->hide();
     deleteLater();
 }

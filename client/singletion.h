@@ -8,7 +8,7 @@ class singletion{
 protected:
     singletion()=default;
     singletion(const singletion<T>&)=delete;
-    singletion& operator =(const singletion<T> st)=delete;
+    singletion& operator =(const singletion<T>& st)=delete;
     static std::shared_ptr<T> _instance;
 public:
     static std::shared_ptr<T> GetInstance(){

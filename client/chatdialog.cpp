@@ -357,6 +357,11 @@ void ChatDialog::slot_add_friend(std::shared_ptr<AuthInfo>auth_info)
     ui->chat_user_list->insertItem(0, item);
     ui->chat_user_list->setItemWidget(item, chat_user_wid);
     _chat_items_added.insert(auth_info->_uid, item);
+
+	// 自动跳转到聊天界面
+	auto si = std::make_shared<SearchInfo>(auth_info->_uid, auth_info->_name,
+		auth_info->_nick, "", auth_info->_sex, auth_info->_icon);
+	emit ui->search_list->sig_jump_chat_item(si);
 }
 
 void ChatDialog::slot_auth_rsp(std::shared_ptr<AuthRsp> auth_rsp)
@@ -385,6 +390,11 @@ void ChatDialog::slot_auth_rsp(std::shared_ptr<AuthRsp> auth_rsp)
     ui->chat_user_list->insertItem(0, item);
     ui->chat_user_list->setItemWidget(item, chat_user_wid);
     _chat_items_added.insert(auth_rsp->_uid, item);
+
+	// 自动跳转到聊天界面
+	auto si = std::make_shared<SearchInfo>(auth_rsp->_uid, auth_rsp->_name,
+		auth_rsp->_nick, "", auth_rsp->_sex, auth_rsp->_icon);
+	emit ui->search_list->sig_jump_chat_item(si);
 }
 
 void ChatDialog::slot_jump_chat_item(std::shared_ptr<SearchInfo> si)
@@ -495,6 +505,10 @@ void ChatDialog::SetSelectChatPage(int uid)
 
         //设置信息
         auto user_info = con_item->GetUserInfo();
+        auto friend_info = UserMgr::GetInstance()->GetFriendById(user_info->_uid);
+        if (friend_info) {
+            user_info->_chat_msgs = friend_info->_chat_msgs;
+        }
         ui->chat_page->SetUserInfo(user_info);
         return;
     }
@@ -527,6 +541,10 @@ void ChatDialog::SetSelectChatPage(int uid)
 
         //设置信息
         auto user_info = con_item->GetUserInfo();
+        auto friend_info = UserMgr::GetInstance()->GetFriendById(user_info->_uid);
+        if (friend_info) {
+            user_info->_chat_msgs = friend_info->_chat_msgs;
+        }
         ui->chat_page->SetUserInfo(user_info);
 
         return;

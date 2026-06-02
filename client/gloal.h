@@ -62,8 +62,18 @@ enum TipErr{
 
 enum ErrorCodes{
     SUCCESS=0,
-    ERR_JSON=1,    //json 解析失败
-    ERR_NETWORK=2, //网络错误
+    ERR_NETWORK = 1,            // 客户端独有：网络错误
+    ERR_JSON = 1001,            // 对齐服务端 Error_Json
+    ERR_RPC_FAILED = 1002,      // 对齐 RPCFailed
+    ERR_VERIFY_EXPIRED = 1003,  // 对齐 VarifyExpired
+    ERR_VERIFY_CODE = 1004,     // 对齐 VarifyCodeErr
+    ERR_USER_EXIST = 1005,      // 对齐 UserExist
+    ERR_PASSWORD_ERR = 1006,    // 对齐 PasswdErr
+    ERR_EMAIL_NOT_MATCH = 1007, // 对齐 EmailNotMatch
+    ERR_PASSWORD_UPDATE = 1008, // 对齐 PasswdUpFailed
+    ERR_PASSWORD_INVALID = 1009,// 对齐 PasswdInvalid
+    ERR_TOKEN_INVALID = 1010,   // 对齐 TokenInvalid
+    ERR_UID_INVALID = 1011,     // 对齐 UidInvalid
 
 };
 
@@ -107,30 +117,11 @@ struct ServerInfo{
     int Uid;
 };
 
-inline std::vector<QString>  strs ={"hello world !",
-                             "nice to meet u",
-                             "New year，new life",
-                             "You have to love yourself",
-                             "My love is written in the wind ever since the whole world is you"};
+extern std::vector<QString> strs;
 
-inline std::vector<QString> heads = {
-    ":/images/res/1b27103fc30ee170ccc0f601dd20ca79.jpg",
-    ":/images/res/771931129d0cb386762bc3c33742dff9.jpg",
-    ":/images/res/59bc6e781a87beb3f61bc174b85a4ac7.jpg",
-    ":/images/res/473e4cc830e8c5f795647248578fdade.jpg",
-    ":/images/res/88843ce0e3e38325d108e44b10dbd243.jpg"
-};
+extern std::vector<QString> heads;
 
-inline std::vector<QString> names = {
-    "马自豪",
-    "蒋玉辉",
-    "薛佳乐",
-    "支帝翔",
-    "韩沅廷",
-    "王雪冰",
-    "王兆宇",
-    "袁一凡"
-};
+extern std::vector<QString> names;
 
 
 //申请好友标签输入框最低长度

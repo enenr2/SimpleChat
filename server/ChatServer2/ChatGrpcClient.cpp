@@ -89,7 +89,7 @@ AuthFriendRsp ChatGrpcClient::NotifyAuthFriend(std::string server_ip, const Auth
 
 bool ChatGrpcClient::GetBaseInfo(std::string base_key, int uid, std::shared_ptr<UserInfo>& userinfo)
 {
-	//���Ȳ�redis�в�ѯ�û���Ϣ
+	
 	std::string info_str = "";
 	bool b_base = RedisMgr::GetInstance()->Get(base_key, info_str);
 	if (b_base) {
@@ -108,8 +108,8 @@ bool ChatGrpcClient::GetBaseInfo(std::string base_key, int uid, std::shared_ptr<
 			<< userinfo->name << " pwd is " << userinfo->pwd << " email is " << userinfo->email << endl;
 	}
 	else {
-		//redis��û�����ѯmysql
-		//��ѯ���ݿ�
+		
+		
 		std::shared_ptr<UserInfo> user_info = nullptr;
 		user_info = MysqlMgr::GetInstance()->GetUser(uid);
 		if (user_info == nullptr) {
@@ -118,7 +118,7 @@ bool ChatGrpcClient::GetBaseInfo(std::string base_key, int uid, std::shared_ptr<
 
 		userinfo = user_info;
 
-		//�����ݿ�����д��redis����
+		
 		Json::Value redis_root;
 		redis_root["uid"] = uid;
 		redis_root["pwd"] = userinfo->pwd;
@@ -143,11 +143,11 @@ TextChatMsgRsp ChatGrpcClient::NotifyTextChatMsg(std::string server_ip,
     Defer defer([&rsp, &req]() {
         rsp.set_fromuid(req.fromuid());
         rsp.set_touid(req.touid());
-        /*for (const auto& text_data : req.textmsgs()) {
-            TextChatData* new_msg = rsp.add_textmsgs();
-            new_msg->set_msg_id(text_data.msg_id());
-            new_msg->set_msgcontent(text_data.msgcontent());
-        }*/
+        for (const auto& msg : req.textmsgs()) {
+            auto* text_msg = rsp.add_textmsgs();
+            text_msg->set_msg_id(msg.msg_id());
+            text_msg->set_msgcontent(msg.msgcontent());
+        }
 
         });
 

@@ -190,12 +190,12 @@ RegisterDialong::~RegisterDialong()
 void RegisterDialong::on_pushButton_2_clicked()
 {
     auto email=ui->lineEdit_2->text();
-    QRegularExpression regex(R"((\w+)(\.|_)?(w*)@(\w+)(\.(\w+))+)");
+    QRegularExpression regex(R"((\w+)(\.|_)?(\w*)@(\w+)(\.(\w+))+)");
     bool match = regex.match(email).hasMatch();
     if(match){
         QJsonObject json_obj;
         json_obj["email"]=email;
-        qDebug()<<(gate_url_prefix+"/get_variflycode");
+        qDebug()<<(gate_url_prefix+"/get_varifycode");
         Httpmgl::GetInstance()->PostHttpReq(QUrl(gate_url_prefix+"/get_varifycode"),json_obj,ReqId::ID_GET_VARIFY_CODE,Modules::REGISTERMOD);
     }else{
         showTip("邮箱地址不正确",false);

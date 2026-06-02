@@ -29,6 +29,8 @@ public:
 	void AuthFriendApply(std::shared_ptr<CSession> session, const short& msg_id, const string& msg_data);
 	void AddFriendApply(std::shared_ptr<CSession> session, const short& msg_id, const string& msg_data);
 	void DealChatTextMsg(std::shared_ptr<CSession> session, const short& msg_id, const string& msg_data);
+	void PostMsgToQue(std::shared_ptr<LogicNode> node);
+	void Stop();
 private:
 	LogicSystem();
 	std::thread _worker_thread;

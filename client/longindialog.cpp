@@ -14,7 +14,7 @@ LonginDialog::LonginDialog(QWidget *parent)
     ui->label_4->ChangeCur(ClickLbState::Text);
     connect(ui->label_4,&ClichedLabel::clicked,this,&LonginDialog::slot_forget_pwd);
     initHttpHandlers();
-    connect(Httpmgl::GetInstance().get(),&Httpmgl::sig_http_finish,this,&LonginDialog::slot_login_mod_finish);
+    connect(Httpmgl::GetInstance().get(),&Httpmgl::sig_login_finish,this,&LonginDialog::slot_login_mod_finish);
     //连接tcp连接请求的信号和槽函数
     connect(this, &LonginDialog::sig_connect_tcp, TcpMgr::GetInstance().get(), &TcpMgr::slot_tcp_connect);
     //连接tcp管理者发出的连接成功信号
@@ -56,6 +56,7 @@ void LonginDialog::slot_login_mod_finish(ReqId id, QString res, ErrorCodes err)
 
     if(err != ErrorCodes::SUCCESS){
         QMessageBox::warning(this,"错误","网络请求错误");
+        enableBtn(true);
         return;
     }
 
@@ -64,12 +65,14 @@ void LonginDialog::slot_login_mod_finish(ReqId id, QString res, ErrorCodes err)
     //json解析错误
     if(jsonDoc.isNull()){
         QMessageBox::warning(this,"错误","Json解析错误");
+        enableBtn(true);
         return;
     }
 
     //json解析错误
     if(!jsonDoc.isObject()){
         QMessageBox::warning(this,"错误","Json解析错误");
+        enableBtn(true);
         return;
     }
 
@@ -88,7 +91,7 @@ void LonginDialog::slot_tcp_con_finish(bool bsuccess)
         jsonObj["uid"] = _uid;
         jsonObj["token"] = _token;
         QJsonDocument doc(jsonObj);
-        QByteArray jsonString = doc.toJson(QJsonDocument::Indented);
+        QByteArray jsonString = doc.toJson(QJsonDocument::Compact);
         //发送tcp请求给chat server
         emit TcpMgr::GetInstance()->sig_send_data(ReqId::ID_CHAT_LOGIN, jsonString);
     }else{
@@ -132,7 +135,16 @@ void LonginDialog::initHttpHandlers()
     _handlers.insert(ReqId::ID_LOGIN_USER, [this](QJsonObject jsonObj){
         int error = jsonObj["error"].toInt();
         if(error != ErrorCodes::SUCCESS){
-            QMessageBox::warning(this,"错误","Json出现错误");
+            switch(error){
+                case ErrorCodes::ERR_PASSWORD_INVALID:
+                    QMessageBox::warning(this,"错误","密码错误"); break;
+                case ErrorCodes::ERR_UID_INVALID:
+                    QMessageBox::warning(this,"错误","用户不存在"); break;
+                case ErrorCodes::ERR_TOKEN_INVALID:
+                    QMessageBox::warning(this,"错误","登录已过期"); break;
+                default:
+                    QMessageBox::warning(this,"错误","登录失败"); break;
+            }
             enableBtn(true);
             return;
         }

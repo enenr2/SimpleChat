@@ -84,10 +84,9 @@ LogicSystem::LogicSystem() {
 			return true;
 		}
 
-		//先查找redis中email对应的验证码是否合理
+		
 		std::string  varify_code;
 		bool b_get_varify = RedisMgr::GetInstance()->Get(CODEPREFIX + src_root["email"].asString(), varify_code);
-		//bool b_get_varify = RedisMgr::GetInstance()->Get(src_root["email"].asString(), varify_code);
 		if (!b_get_varify) {
 			std::cout << " get varify code expired" << std::endl;
 			root["error"] = ErrorCodes::VarifyExpired;
@@ -104,7 +103,7 @@ LogicSystem::LogicSystem() {
 			return true;
 		}
 
-		//访问redis查找
+		
 		bool b_usr_exist = RedisMgr::GetInstance()->ExistsKey(src_root["user"].asString());
 		if (b_usr_exist) {
 			std::cout << src_root["user"].asString() << std::endl;
@@ -115,7 +114,7 @@ LogicSystem::LogicSystem() {
 			return true;
 		}
 
-		//查找数据库判断用户是否存在
+		
 		int uid = MysqlMgr::GetInstance()->RegUser(src_root["name"].asString(), src_root["email"].asString(), pwd);
 		if(uid==0||uid==-1) {
 			std::cout << " user exist" << std::endl;
@@ -137,7 +136,7 @@ LogicSystem::LogicSystem() {
 		return true;
 		});
 
-	//用户登录逻辑
+	
 	RegPost("/user_login", [](std::shared_ptr<HttpConnection> connection) {
 		auto body_str = boost::beast::buffers_to_string(connection->_request.body().data());
 		std::cout << "receive body is " << body_str << std::endl;
@@ -157,7 +156,7 @@ LogicSystem::LogicSystem() {
 		auto name = src_root["user"].asString();
 		auto pwd = src_root["passwd"].asString();
 		UserInfo userInfo;
-		//查询数据库判断用户名和密码是否匹配
+		
 		bool pwd_valid = MysqlMgr::GetInstance()->CheckPwd(name, pwd, userInfo);
 		if (!pwd_valid) {
 			std::cout << " user pwd not match" << std::endl;
@@ -167,7 +166,7 @@ LogicSystem::LogicSystem() {
 			return true;
 		}
 
-		//查询StatusServer找到合适的连接
+		
 		auto reply = StatusGrpcClient::GetInstance()->GetChatServer(userInfo.uid);
 		if (reply.error()) {
 			std::cout << " grpc get chat server failed, error is " << reply.error() << std::endl;
@@ -183,6 +182,7 @@ LogicSystem::LogicSystem() {
 		root["uid"] = userInfo.uid;
 		root["token"] = reply.token();
 		root["host"] = reply.host();
+		root["port"] = reply.port();
 		std::string jsonstr = root.toStyledString();
 		beast::ostream(connection->_response.body()) << jsonstr;
 		return true;
@@ -234,7 +234,7 @@ LogicSystem::LogicSystem() {
 			return true;
 		}
 
-		bool b_up= MysqlMgr::GetInstance()->UpdatePwd(email, pwd);
+		bool b_up= MysqlMgr::GetInstance()->UpdatePwd(email, newpwd);
 		if (!b_up) {
 			std::cout << " reset pwd failed" << std::endl;
 			root["error"] = ErrorCodes::PasswdUpFailed;

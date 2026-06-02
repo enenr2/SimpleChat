@@ -88,11 +88,11 @@ struct FriendInfo {
 
     FriendInfo(std::shared_ptr<AuthInfo> auth_info):_uid(auth_info->_uid),
         _name(auth_info->_name),_nick(auth_info->_nick),_icon(auth_info->_icon),
-        _sex(auth_info->_sex){}
+        _sex(auth_info->_sex),_desc(""),_back(""),_last_msg(""){}
 
     FriendInfo(std::shared_ptr<AuthRsp> auth_rsp):_uid(auth_rsp->_uid),
         _name(auth_rsp->_name),_nick(auth_rsp->_nick),_icon(auth_rsp->_icon),
-        _sex(auth_rsp->_sex){}
+        _sex(auth_rsp->_sex),_desc(""),_back(""),_last_msg(""){}
 
     void AppendChatMsgs(const std::vector<std::shared_ptr<TextChatData>> text_vec);
 

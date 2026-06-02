@@ -7,7 +7,7 @@ _works(size), _nextIOService(0) {
         _works[i] = std::make_unique<Work>(boost::asio::make_work_guard(_ioServices[i]));
     }
 
-    //ioservicẹ߳ÿ߳ڲioservice
+    
     for (std::size_t i = 0; i < _ioServices.size(); ++i) {
         _threads.emplace_back([this, i]() {
             _ioServices[i].run();
@@ -29,14 +29,14 @@ boost::asio::io_context& AsioIOServicePool::GetIOService() {
 }
 
 void AsioIOServicePool::Stop() {
-    //Ϊִwork.resetiocontextrun״̬˳
-    //iocontextѾ˶дļ¼󣬻Ҫֶstop÷
+    
+    
     for (auto& ios : _ioServices) {
         ios.stop();
     }
 
     for (auto& work : _works) {
-        //ѷֹͣ
+        
         work.reset();
     }
 

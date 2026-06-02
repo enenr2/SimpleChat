@@ -31,7 +31,7 @@ private:
     void enableBtn(bool ok);
     void initHttpHandlers();
 
-    int _uid;
+    int _uid = 0;
     QString _token;
     QMap<ReqId,std::function<void(const QJsonObject&)>> _handlers;
 };

@@ -28,16 +28,14 @@ unsigned char ToHex(unsigned char x) {
 }
 
 unsigned char FromHex(unsigned char x) {
-	unsigned char y;
-	if (x >= 'A' && x <= 'z')
-		y = x - 'A' + 10;
-	else if (x >= 'a' && x <= 'z')
-		y = x - 'a' + 10;
-	else if (x >= '0' && x <= '9')
-		y = x - '0';
-	else 
-		assert(0);
-	return y;
+	if (x >= '0' && x <= '9')
+		return x - '0';
+	else if (x >= 'A' && x <= 'F')
+		return x - 'A' + 10;
+	else if (x >= 'a' && x <= 'f')
+		return x - 'a' + 10;
+	assert(0);
+	return 0;
 }
 
 std::string UrlEncode(const std::string& str)
@@ -46,18 +44,18 @@ std::string UrlEncode(const std::string& str)
 	size_t length = str.length();
 	for (size_t i = 0; i < length; i++)
 	{
-		//判断是否仅有数字和字母构成
+		
 		if (isalnum((unsigned char)str[i]) ||
 			(str[i] == '-') ||
 			(str[i] == '_') ||
 			(str[i] == '.') ||
 			(str[i] == '~'))
 			strTemp += str[i];
-		else if (str[i] == ' ') //为空字符
+		else if (str[i] == ' ') 
 			strTemp += "+";
 		else
 		{
-			//其他字符需要提前加%并且高四位和低四位分别转为16进制
+			
 			strTemp += '%';
 			strTemp += ToHex((unsigned char)str[i] >> 4);
 			strTemp += ToHex((unsigned char)str[i] & 0x0F);
@@ -72,9 +70,9 @@ std::string UrlDecode(const std::string& str)
 	size_t length = str.length();
 	for (size_t i = 0; i < length; i++)
 	{
-		//还原+为空
+		
 		if (str[i] == '+') strTemp += ' ';
-		//遇到%将后面的两个字符从16进制转为char再拼接
+		
 		else if (str[i] == '%')
 		{
 			assert(i + 2 < length);
@@ -88,9 +86,9 @@ std::string UrlDecode(const std::string& str)
 }
 
 void HttpConnection::PreParseGetParam() {
-	// 提取 URI  
+	
 	auto uri = _request.target();
-	// 查找查询字符串的开始位置（即 '?' 的位置）  
+	
 	auto query_pos = uri.find('?');
 	if (query_pos == std::string::npos) {
 		_get_url = uri;
@@ -106,13 +104,13 @@ void HttpConnection::PreParseGetParam() {
 		auto pair = query_string.substr(0, pos);
 		size_t eq_pos = pair.find('=');
 		if (eq_pos != std::string::npos) {
-			key = UrlDecode(pair.substr(0, eq_pos)); // 假设有 url_decode 函数来处理URL解码  
+			key = UrlDecode(pair.substr(0, eq_pos)); 
 			value = UrlDecode(pair.substr(eq_pos + 1));
 			_get_params[key] = value;
 		}
 		query_string.erase(0, pos + 1);
 	}
-	// 处理最后一个参数对（如果没有 & 分隔符）  
+	
 	if (!query_string.empty()) {
 		size_t eq_pos = query_string.find('=');
 		if (eq_pos != std::string::npos) {
@@ -124,7 +122,7 @@ void HttpConnection::PreParseGetParam() {
 }
 
 void HttpConnection::HandleReq() {
-	//设置版本
+	
 	_response.version(_request.version());
 	_response.keep_alive(false);
 	if (_request.method() == http::verb::get) {

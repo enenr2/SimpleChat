@@ -24,12 +24,12 @@ public:
 			auto reply = (redisReply*)redisCommand(context, "AUTH %s", pwd);
 			if (reply->type == REDIS_REPLY_ERROR) {
 				std::cout << "认证失败" << std::endl;
-				//执行成功 释放redisCommand执行后返回的redisReply所占用的内存
+				
 				freeReplyObject(reply);
 				continue;
 			}
 
-			//执行成功 释放redisCommand执行后返回的redisReply所占用的内存
+			
 			freeReplyObject(reply);
 			std::cout << "认证成功" << std::endl;
 			connections_.push(context);
@@ -43,7 +43,7 @@ public:
 					counter_ = 0;
 				}
 
-				std::this_thread::sleep_for(std::chrono::seconds(1)); // 每隔 30 秒发送一次 PING 命令
+				std::this_thread::sleep_for(std::chrono::seconds(1)); 
 			}
 			});
 
@@ -70,7 +70,7 @@ public:
 			}
 			return !connections_.empty();
 			});
-		//如果停止则直接返回空指针
+		
 		if (b_stop_) {
 			return  nullptr;
 		}
@@ -123,13 +123,13 @@ private:
 		auto reply = (redisReply*)redisCommand(context, "AUTH %s", pwd_);
 		if (reply->type == REDIS_REPLY_ERROR) {
 			std::cout << "认证失败" << std::endl;
-			//执行成功 释放redisCommand执行后返回的redisReply所占用的内存
+			
 			freeReplyObject(reply);
 			redisFree(context);
 			return false;
 		}
 
-		//执行成功 释放redisCommand执行后返回的redisReply所占用的内存
+		
 		freeReplyObject(reply);
 		std::cout << "认证成功" << std::endl;
 		returnConnection(context);
@@ -139,14 +139,14 @@ private:
 	void checkThreadPro() {
 		size_t pool_size;
 		{
-			// 先拿到当前连接数
+			
 			std::lock_guard<std::mutex> lock(mutex_);
 			pool_size = connections_.size();
 		}
 
 		for (int i = 0; i < pool_size && !b_stop_; ++i) {
 			redisContext* ctx = nullptr;
-			// 1) 取出一个连接(持有锁)
+			
 			bool bsuccess = false;
 			auto* context = getConNonBlock();
 			if (context == nullptr) {
@@ -156,7 +156,7 @@ private:
 			redisReply* reply = nullptr;
 			try {
 				reply = (redisReply*)redisCommand(context, "PING");
-				// 2. 先看底层 I/O／协议层有没有错
+				
 				if (context->err) {
 					std::cout << "Connection error: " << context->err << std::endl;
 					if (reply) {
@@ -167,7 +167,7 @@ private:
 					continue;
 				}
 
-				// 3. 再看 Redis 自身返回的是不是 ERROR
+				
 				if (!reply || reply->type == REDIS_REPLY_ERROR) {
 					std::cout << "reply is null, redis ping failed: " << std::endl;
 					if (reply) {
@@ -177,8 +177,8 @@ private:
 					fail_count_++;
 					continue;
 				}
-				// 4. 如果都没问题，则还回去
-				//std::cout << "connection alive" << std::endl;
+				
+				
 				freeReplyObject(reply);
 				returnConnection(context);
 			}
@@ -193,14 +193,14 @@ private:
 
 		}
 
-		//执行重连操作
+		
 		while (fail_count_ > 0) {
 			auto res = reconnect();
 			if (res) {
 				fail_count_--;
 			}
 			else {
-				//留给下次再重试
+				
 				break;
 			}
 		}
@@ -239,12 +239,12 @@ private:
 				auto reply = (redisReply*)redisCommand(context, "AUTH %s", pwd_);
 				if (reply->type == REDIS_REPLY_ERROR) {
 					std::cout << "认证失败" << std::endl;
-					//执行成功 释放redisCommand执行后返回的redisReply所占用的内存
+					
 					freeReplyObject(reply);
 					continue;
 				}
 
-				//执行成功 释放redisCommand执行后返回的redisReply所占用的内存
+				
 				freeReplyObject(reply);
 				std::cout << "认证成功" << std::endl;
 				connections_.push(context);

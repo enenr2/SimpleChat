@@ -91,7 +91,7 @@ void CServer::on_timer(const boost::system::error_code& ec) {
 		session_count++;
 	}
 
-	//session
+	
 	auto& cfg = ConfigMgr::Inst();
 	auto self_name = cfg["SelfServer"]["Name"];
 	auto count_str = std::to_string(session_count);

@@ -10,11 +10,10 @@
 #include <memory>
 #include "connst.h"
 #include "MsgNode.h"
-using namespace std;
-namespace beast = boost::beast;         // from <boost/beast.hpp>
-namespace http = beast::http;           // from <boost/beast/http.hpp>
-namespace net = boost::asio;            // from <boost/asio.hpp>
-using tcp = boost::asio::ip::tcp;       // from <boost/asio/ip/tcp.hpp>
+namespace beast = boost::beast;         
+namespace http = beast::http;           
+namespace net = boost::asio;            
+using tcp = boost::asio::ip::tcp;       
 
 
 class CServer;
@@ -32,6 +31,8 @@ public:
 	void Start();
 	void Send(char* msg, short max_length, short msgid);
 	void Send(std::string msg, short msgid);
+	void SendImpl(char* msg, short max_length, short msgid);
+	void SendImpl(std::string msg, short msgid);
 	void Close();
 	std::shared_ptr<CSession> SharedSelf();
 	void AsyncReadBody(int length);
@@ -59,8 +60,9 @@ private:
 	std::shared_ptr<MsgNode> _recv_head_node;
 	int _user_uid;
 	std::atomic<time_t> _last_heartbeat;
-	//session 
+	
 	std::mutex _session_mtx;
+	net::io_context& _io_context;
 };
 
 class LogicNode {
@@ -71,4 +73,3 @@ private:
 	std::shared_ptr<CSession> _session;
 	std::shared_ptr<RecvNode> _recvnode;
 };
-

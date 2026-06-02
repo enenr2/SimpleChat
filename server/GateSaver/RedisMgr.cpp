@@ -26,7 +26,7 @@ bool RedisMgr::Get(const std::string& key, std::string& value)
     if (reply == NULL) {
         std::cout << "[ GET  " << key << " ] failed" << std::endl;
         std::cout<< "Error: " << "reply == NULL" << std::endl;
-        //freeReplyObject(reply);
+        
         return false;
     }
 
@@ -51,13 +51,13 @@ bool RedisMgr::Get(const std::string& key, std::string& value)
 }
 
 bool RedisMgr::Set(const std::string& key, const std::string& value) {
-    //执行redis命令行
+    
     auto connect = _con_pool->getConnection();
     if (connect == nullptr)
         return false;
     auto reply = (redisReply*)redisCommand(connect, "SET %s %s", key.c_str(), value.c_str());
 
-    //如果返回NULL则说明执行失败
+    
     if (NULL == reply)
     {
         std::cout << "Execut command [ SET " << key << "  " << value << " ] failure ! " << std::endl;
@@ -65,7 +65,7 @@ bool RedisMgr::Set(const std::string& key, const std::string& value) {
         return false;
     }
 
-    //如果执行失败则释放连接
+    
     if (!(reply->type == REDIS_REPLY_STATUS && (strcmp(reply->str, "OK") == 0 || strcmp(reply->str, "ok") == 0)))
     {
         std::cout << "Execut command [ SET " << key << "  " << value << " ] failure ! " << std::endl;
@@ -73,7 +73,7 @@ bool RedisMgr::Set(const std::string& key, const std::string& value) {
         return false;
     }
 
-    //执行成功 释放redisCommand执行后返回的redisReply所占用的内存
+    
     freeReplyObject(reply);
     std::cout << "Execut command [ SET " << key << "  " << value << " ] success ! " << std::endl;
     return true;
@@ -85,14 +85,17 @@ bool RedisMgr::Auth(const std::string& password)
     if (connect == nullptr)
         return false;
     auto reply = (redisReply*)redisCommand(connect, "AUTH %s", password.c_str());
-    if (reply->type == REDIS_REPLY_ERROR) {
-        std::cout << "认证失败" << std::endl;
-        //执行成功 释放redisCommand执行后返回的redisReply所占用的内存
+   /* if (reply->type == REDIS_REPLY_ERROR) {
         freeReplyObject(reply);
+        std::cout << "认证失败" << std::endl;
+        return false;
+    }*/
+    if (reply->type == REDIS_REPLY_ERROR) {
+        freeReplyObject(reply);
+        std::cout << "认证失败: " << std::endl;
         return false;
     }
     else {
-        //执行成功 释放redisCommand执行后返回的redisReply所占用的内存
         freeReplyObject(reply);
         std::cout << "认证成功" << std::endl;
         return true;

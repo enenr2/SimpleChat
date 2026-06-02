@@ -82,14 +82,14 @@ public:
 		auto stub_ = pool_->getConnection();
 
 		if (!stub_) {
-			// 无可用连接或已停止
+			
 			reply.set_error(ErrorCodes::RECFailed);
 			return reply;
 		}
 
 		Status status = stub_->GetVarifyCode(&context, request, &reply);
 
-		// 不论成功与否，都把连接放回池中（以便重用）
+		
 		pool_->returnConnection(std::move(stub_));
 
 		if (status.ok()) {

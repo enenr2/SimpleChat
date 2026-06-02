@@ -13,7 +13,7 @@ std::shared_ptr<UserInfo> MysqlMgr::GetUser(int uid)
 
 std::shared_ptr<UserInfo> MysqlMgr::GetUser(std::string name)
 {
-    return _dao.GetUser(name);;
+    return _dao.GetUser(name);
 }
 
 bool MysqlMgr::CheckEmail(const std::string& name, const std::string& email) {

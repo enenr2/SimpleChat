@@ -23,10 +23,10 @@
 #include<cassert>
 
 
-namespace beast = boost::beast;         // from <boost/beast.hpp>
-namespace http = beast::http;           // from <boost/beast/http.hpp>
-namespace net = boost::asio;            // from <boost/asio.hpp>
-using tcp = boost::asio::ip::tcp;       // from <boost/asio/ip/tcp.hpp>
+namespace beast = boost::beast;         
+namespace http = beast::http;           
+namespace net = boost::asio;            
+using tcp = boost::asio::ip::tcp;       
 
 enum ErrorCodes {
 	Success = 0,
@@ -63,7 +63,7 @@ private:
 #define LOGIN_COUNT  "logincount"
 #define LOCK_COUNT "lockcount"
 
-//分布式锁的持有时间
+
 #define LOCK_TIME_OUT 10
-//分布式锁的重试时间
+
 #define ACQUIRE_TIME_OUT 5

@@ -14,7 +14,7 @@ ChatServiceImpl::ChatServiceImpl()
 
 Status ChatServiceImpl::NotifyAddFriend(ServerContext* context, const AddFriendReq* request, AddFriendRsp* reply)
 {
-    //�����û��Ƿ��ڱ�������
+    
     auto touid = request->touid();
     auto session = UserMgr::GetInstance()->GetSession(touid);
 
@@ -24,12 +24,12 @@ Status ChatServiceImpl::NotifyAddFriend(ServerContext* context, const AddFriendR
         reply->set_touid(request->touid());
         });
 
-    //�û������ڴ�����ֱ�ӷ���
+    
     if (session == nullptr) {
         return Status::OK;
     }
 
-    //���ڴ�����ֱ�ӷ���֪ͨ�Է�
+    
     Json::Value  rtvalue;
     rtvalue["error"] = ErrorCodes::Success;
     rtvalue["applyuid"] = request->applyuid();
@@ -48,7 +48,7 @@ Status ChatServiceImpl::NotifyAddFriend(ServerContext* context, const AddFriendR
 
 Status ChatServiceImpl::NotifyAuthFriend(ServerContext* context, const AuthFriendReq* request, AuthFriendRsp* reply)
 {
-    //�����û��Ƿ��ڱ�������
+    
     auto touid = request->touid();
     auto fromuid = request->fromuid();
     auto session = UserMgr::GetInstance()->GetSession(touid);
@@ -59,12 +59,12 @@ Status ChatServiceImpl::NotifyAuthFriend(ServerContext* context, const AuthFrien
         reply->set_touid(request->touid());
         });
 
-    //�û������ڴ�����ֱ�ӷ���
+    
     if (session == nullptr) {
         return Status::OK;
     }
 
-    //���ڴ�����ֱ�ӷ���֪ͨ�Է�
+    
     Json::Value  rtvalue;
     rtvalue["error"] = ErrorCodes::Success;
     rtvalue["fromuid"] = request->fromuid();
@@ -91,28 +91,28 @@ Status ChatServiceImpl::NotifyAuthFriend(ServerContext* context, const AuthFrien
 
 Status ChatServiceImpl::NotifyTextChatMsg(::grpc::ServerContext* context, const TextChatMsgReq* request, TextChatMsgRsp* response)
 {
-        //�����û��Ƿ��ڱ�������
+        
         auto touid = request->touid();
         auto session = UserMgr::GetInstance()->GetSession(touid);
         response->set_error(ErrorCodes::Success);
 
-        //�û������ڴ�����ֱ�ӷ���
+        
         if (session == nullptr) {
             return Status::OK;
         }
 
-        //���ڴ�����ֱ�ӷ���֪ͨ�Է�
+        
         Json::Value  rtvalue;
         rtvalue["error"] = ErrorCodes::Success;
         rtvalue["fromuid"] = request->fromuid();
         rtvalue["touid"] = request->touid();
 
-        //������������֯Ϊ����
+        
         Json::Value text_array;
         for (auto& msg : request->textmsgs()) {
             Json::Value element;
             element["content"] = msg.msgcontent();
-            element["msgid"] = msg.msg_id();
+            element["msgid"] = msg.unique_id().c_str();
             text_array.append(element);
         }
         rtvalue["text_array"] = text_array;
@@ -124,7 +124,7 @@ Status ChatServiceImpl::NotifyTextChatMsg(::grpc::ServerContext* context, const 
 }
 
 bool ChatServiceImpl::GetBaseInfo(std::string base_key, int uid, std::shared_ptr<UserInfo>& userinfo) {
-    //���Ȳ�redis�в�ѯ�û���Ϣ
+    
     std::string info_str = "";
     bool b_base = RedisMgr::GetInstance()->Get(base_key, info_str);
     if (b_base) {
@@ -143,8 +143,8 @@ bool ChatServiceImpl::GetBaseInfo(std::string base_key, int uid, std::shared_ptr
             << userinfo->name << " pwd is " << userinfo->pwd << " email is " << userinfo->email << endl;
     }
     else {
-        //redis��û�����ѯmysql
-        //��ѯ���ݿ�
+        
+        
         std::shared_ptr<UserInfo> user_info = nullptr;
         user_info = MysqlMgr::GetInstance()->GetUser(uid);
         if (user_info == nullptr) {
@@ -153,7 +153,7 @@ bool ChatServiceImpl::GetBaseInfo(std::string base_key, int uid, std::shared_ptr
 
         userinfo = user_info;
 
-        //�����ݿ�����д��redis����
+        
         Json::Value redis_root;
         redis_root["uid"] = uid;
         redis_root["pwd"] = userinfo->pwd;
