@@ -9,3 +9,8 @@ Makefile.Debug
 Makefile.Release
 qrc_*.cpp
 file_resource.rc
+.vs/
+*.ipch
+*.db-shm
+*.db-wal
+.claude/
